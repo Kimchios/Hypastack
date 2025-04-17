@@ -35,13 +35,13 @@ export default {
 
     // Only allow GET and HEAD
     if (request.method !== "GET" && request.method !== "HEAD") {
-      return new Response("Method Not Allowed", { status: 405 });
+      return new Response("405 Method Not Allowed", { status: 405 });
     }
 
     // Empty path
     if (!path) {
       return new Response(
-        JSON.stringify({ error: "Access denied" }),
+        JSON.stringify({ error: "404 Forbidden" }),
         { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
@@ -72,14 +72,14 @@ export default {
     // 4. BLOCK uploads and pastes specifically to ensure they are private
     if (path.startsWith("uploads/") || path.startsWith("pastes/")) {
       return new Response(
-        JSON.stringify({ error: "Access denied" }),
+        JSON.stringify({ error: "404 Forbidden" }),
         { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } }
       );
     }
 
     // 5. BLOCK everything else
     return new Response(
-      JSON.stringify({ error: "Access denied" }),
+      JSON.stringify({ error: "404 Forbidden" }),
       {
         status: 403,
         headers: { "Content-Type": "application/json", ...corsHeaders },
@@ -95,7 +95,7 @@ async function serveFromR2(env, key, corsHeaders, opts = {}) {
   const object = await env.R2_BUCKET.get(key);
 
   if (!object) {
-    return new Response("Not Found", { status: 404, headers: corsHeaders });
+    return new Response("404 Not Found", { status: 404, headers: corsHeaders });
   }
 
   const headers = new Headers(corsHeaders);
